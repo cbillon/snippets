@@ -1,0 +1,4 @@
+with tb1 as (SELECT unnest(plugins, recursive := true) FROM read_json_auto('https://download.moodle.org/api/1.3/pluglist.php')),
+ tb2 as (select id,name,component,left(component,position('_' in component) - 1) as plugin_type, timelastreleased,
+ extract('year' from epoch_ms(timelastreleased * 1000)) as annee from tb1 where plugin_type = 'tool')
+select * from tb2 where annee = 2024 order by plugin_type,component

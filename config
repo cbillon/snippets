@@ -1,0 +1,13 @@
+host github
+    hostname github.com
+    user cbillon 
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_ed25519
+
+host bitbucket
+    user cbillon 
+    hostname bitbucket.org
+    PreferredAuthentications publickey
+    IdentityFile ~/.ssh/id_ed25519
+
+

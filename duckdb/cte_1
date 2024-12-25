@@ -1,0 +1,4 @@
+with tb1 as (SELECT unnest(plugins, recursive := true) FROM read_json_auto('https://download.moodle.org/api/1.3/pluglist.php')), 
+tb2 as (select id,name,component,left(component,position('_' in component) - 1) as plugin_type, timelastreleased  ,extract('year' from epoch_ms(timelastreleased * 1000)) as annee from tb1 ), 
+tb3 as (select plugin_type, count(*) as total from tb2 group by plugin_type order by plugin_type ) 
+select tb3.plugin_type,annee, count(*), total, floor(count(*)*100/total) as percent from tb2, tb3 group by tb3.plugin_type,total,annee order by tb3.plugin_type,total,annee desc;

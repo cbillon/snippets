@@ -1,0 +1,55 @@
+# additional packages
+sudo apt install -y ca-certificates apt-transport-https ca-certificates curl gnupg software-properties-common
+
+# add docker gpg key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+sudo chmod 0644 /usr/share/keyrings/docker.gpg
+
+# add to repository list
+echo "deb [arch="$(dpkg --print-architecture)" signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -sc) stable" | sudo tee /etc/apt/sources.list.d/docker.list
+
+# update apt and install
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+
+# ensure start on boot 
+sudo systemctl enable docker
+
+# check status
+sudo systemctl status docker.service
+
+# check most recent logs
+sudo journalctl -u docker.service -r --no-pager
+
+# create docker daemon config file
+# set DNS to google public dns server
+sudo mkdir -p /etc/docker
+cat <<EOF  | sudo tee /etc/docker/daemon.json
+{
+"dns": ["8.8.8.8"]
+}
+EOF
+
+# restart daemon, show logs again
+sudo systemctl restart docker.service
+sudo journalctl -u docker.service -r --no-pager
+
+# group already created, but go ahead and make sure
+sudo groupadd docker
+
+# add self to docker group
+sudo usermod -aG docker $USER
+
+# reevaluate group memberships without exiting
+exec su -l $USER
+
+# should list 'docker' group now
+id
+
+# version installed
+sudo docker version
+
+# quick test of container
+sudo docker run hello-world
+
+

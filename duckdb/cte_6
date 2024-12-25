@@ -1,0 +1,5 @@
+
+with tb1 as (SELECT unnest(plugins, recursive := true) FROM read_json_auto('https://download.moodle.org/api/1.3/pluglist.php')),
+tb2 as (SELECT id, component, unnest(versions, recursive := true) FROM tb1 WHERE component like 'tool_%'),
+tb3 as (SELECT id, component, unnest(supportedmoodles, recursive := true) FROM tb2)
+select  id, component,release from tb3 group by id, component,release  having release >= '4.0' order by  component,release desc;

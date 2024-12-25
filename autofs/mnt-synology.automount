@@ -1,0 +1,8 @@
+[Unit]
+Description=Automount Nas Synology
+
+[Automount]
+Where=/mnt/synology
+
+[Install]
+WantedBy=multi-user.target
